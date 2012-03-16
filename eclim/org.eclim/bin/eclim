@@ -1,0 +1,107 @@
+#!/bin/sh
+
+# Copyright (C) 2005 - 2011  Eric Van Dewoestine
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+FILEPATH="$0"
+# handle symlink to eclim script
+# readlink -f is easier, but not supported on mac or bsd
+while [ -h "$FILEPATH" ] ; do
+  PREV=$FILEPATH
+  # readlink doesn't appear to be standard on solaris
+  #FILEPATH=`readlink "$FILEPATH"`
+  FILEPATH=`ls -l "$FILEPATH" | awk '{ print $NF }'`
+  if [ -z "$FILEPATH" -o "$FILEPATH" = "$PREV" ] ; then
+    FILEPATH=$PREV
+    break
+  fi
+
+  # handle relative symlinks
+  if [ ! -f "$FILEPATH" ] ; then
+    PREVDIR=`dirname "$PREV"`
+    FILEPATH=$PREVDIR/$FILEPATH
+  fi
+done
+CURPATH=`dirname "$FILEPATH"`
+
+PERL=`which perl 2> /dev/null`
+
+ECLIMRC=$HOME/.eclimrc
+if [ "$1" = "-f" ] ; then
+  while getopts ":f:" opt ; do
+    case "$opt" in
+      f)
+        ECLIMRC="$OPTARG"
+        shift
+        shift
+        break
+        ;;
+      \?)
+        continue
+        ;;
+      :)
+        echo "missing argument for: -$OPTARG"
+        exit 1
+        ;;
+    esac
+  done
+fi
+
+# attempt to grab port number from .eclimrc file if available.
+if [ -f "$ECLIMRC" -a -n "$PERL" ] ; then
+  ARGS=`
+    cat "$ECLIMRC" | \
+      perl -pe '
+        # remove leading/trailing whitespace
+        s|^\s+||g ; s|\s+$|\n|g ;
+        # remove line continuations
+        s|\\\\\n||g ;
+      ' | \
+      perl -pe '
+        # remove all but nailgun properties
+        s|^(?!\s*(?:-D)?nailgun\.server\.[a-z]+\s*=).*$||g ;
+        # convert properties to nailgun arguments.
+        s|\s*(?:-D)?nailgun\.server\.([a-z]+)\s*=\s*(\S+)| --nailgun-\1 \2|g ;
+        # remove all new line characters
+        s|\n||g ;
+        # --nailgun-host should actually be --nailgun-server
+        s|--nailgun-host|--nailgun-server|g ;
+        # if the nailgun server ip is 0.0.0.0, just delete the arg
+        s| --nailgun-server 0\.0\.0\.0||g ;
+      #'
+  `
+  if [ "$ARGS" != "" ] ; then
+    NAILGUN_ARGS=$ARGS
+  fi
+fi
+
+# add default port number if not supplied
+PORT_SUPPLIED=`echo "$NAILGUN_ARGS $@" | sed '/--nailgun-port/!d'`
+if [ -z "$PORT_SUPPLIED" ] ; then
+  NAILGUN_ARGS="$NAILGUN_ARGS --nailgun-port 9091"
+fi
+
+"$CURPATH/ng" $NAILGUN_ARGS org.eclim.command.Main "$@"
+
+# Weirdest thing that for the life of me I can't figure out.
+# Sometimes when executed through vim, the exit status will be
+# 227 even though no error occurred.  Trying to reproduce with
+# manual system() or ! call, all work fine.
+# So, here we just swallow the 227 error code.
+EXIT_STATUS=$?
+if [ $EXIT_STATUS -eq 227 ]; then
+  exit 0
+fi
+exit $EXIT_STATUS

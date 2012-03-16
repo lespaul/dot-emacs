@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Encoding=UTF-8
+Name=eclimd
+Exec=${eclipse.home}/eclimd start
+StartupNotify=false
+X-GNOME-Autostart-enabled=true

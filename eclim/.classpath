@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+  <classpathentry kind="con" path="org.eclim.ECLIM_CONTAINER"/>
+  <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+  <classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
+  <classpathentry kind="lib" path="ant/lib/eclim-checkstyle.jar"/>
+  <classpathentry kind="lib" path="ant/lib/junit-4.9.jar"/>
+  <classpathentry kind="lib" path="ant/lib/testng-5.1-jdk15.jar"/>
+  <classpathentry kind="var" path="FORMIC_HOME/lib/ant-1.8.2.jar"/>
+  <classpathentry kind="var" path="FORMIC_HOME/lib/foxtrot-3.0.jar"/>
+  <classpathentry kind="var" path="FORMIC_HOME/lib/looks-2.1.4.jar"/>
+  <classpathentry kind="var" path="FORMIC_HOME/lib/miglayout-3.5.0.jar"/>
+  <classpathentry kind="output" path="build/bin"/>
+  <classpathentry kind="src" path="org.eclim/java"/>
+  <classpathentry kind="src" path="org.eclim.cdt/java"/>
+  <classpathentry kind="src" path="org.eclim.cdt/test/junit"/>
+  <classpathentry kind="src" path="org.eclim.core/java"/>
+  <classpathentry kind="src" path="org.eclim.core/test/junit"/>
+  <classpathentry kind="src" path="org.eclim.dltk/java"/>
+  <classpathentry kind="src" path="org.eclim.dltkruby/java"/>
+  <classpathentry kind="src" path="org.eclim.dltkruby/test/junit"/>
+  <classpathentry kind="src" path="org.eclim.installer/java"/>
+  <classpathentry kind="src" path="org.eclim.jdt/java"/>
+  <classpathentry kind="src" path="org.eclim.jdt/test/junit"/>
+  <classpathentry kind="src" path="org.eclim.pdt/java"/>
+  <classpathentry kind="src" path="org.eclim.pdt/test/junit"/>
+  <classpathentry kind="src" path="org.eclim.vimplugin/java"/>
+  <classpathentry kind="src" path="org.eclim.wst/java"/>
+  <classpathentry kind="src" path="org.eclim.wst/test/junit"/>
+  <classpathentry exported="true" kind="src" path="/formic"/>
+</classpath>
